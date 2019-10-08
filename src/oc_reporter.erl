@@ -108,7 +108,9 @@ handle_info(report_spans, State=#state{reporters=Reporters,
     erlang:cancel_timer(Ref),
     Ref1 = erlang:send_after(SendInterval, self(), report_spans),
     send_spans(Reporters),
-    {noreply, State#state{timer_ref=Ref1}}.
+    {noreply, State#state{timer_ref=Ref1}};
+handle_info(ssl_closed, State) ->
+    {noreply, State}.
 
 code_change(_, State, _) ->
     {ok, State}.
@@ -158,7 +160,8 @@ report(undefined, _, _) ->
 report(Reporter, Spans, Config) ->
     %% don't let a reporter exception crash us
     try
-        Reporter:report(Spans, Config)
+        Reporter:report(Spans, Config),
+        ?LOG_INFO("### reporter ~p spans ~p config ~p", [Reporter, Spans, Config])
     catch
         ?WITH_STACKTRACE(Class, Exception, StackTrace)
             ?LOG_INFO("reporter threw exception: reporter=~p ~p:~p stacktrace=~p",
