@@ -204,11 +204,14 @@ finish_span(SpanCtx=#span_ctx{span_id=SpanId,
                               trace_options=TraceOptions}) when ?IS_ENABLED(TraceOptions) ->
     case ets:take(?SPAN_TAB, SpanId) of
         [SpanData] ->
+            io:format("### finish_span: SpanData ~p~n", [SpanData]),
             oc_span:finish_span(SpanCtx, SpanData);
         _ ->
+            io:format("### finish_span: no SpanData~n"),
             false
     end;
-finish_span(_) ->
+finish_span(X) ->
+    io:format("### finish_span: WTF ~p~n", [X]),
     true.
 
 %%--------------------------------------------------------------------

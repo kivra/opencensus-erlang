@@ -158,6 +158,7 @@ report(undefined, _, _) ->
 report(Reporter, Spans, Config) ->
     %% don't let a reporter exception crash us
     try
+        io:format("### calling ~p:report: Spans ~p Config ~p~n", [Reporter, Spans, Config]),
         Reporter:report(Spans, Config)
     catch
         ?WITH_STACKTRACE(Class, Exception, StackTrace)
